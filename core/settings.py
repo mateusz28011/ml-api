@@ -48,11 +48,15 @@ INSTALLED_APPS = [
     "corsheaders",
     "rest_framework",
     "django_filters",
+    "django_celery_results",
     "drf_yasg",
     "storages",
     "datasets",
     "ml",
 ]
+
+CELERY_RESULT_BACKEND = "django-db"
+CELERY_BROKER_URL = os.getenv("REDIS_URL")
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -158,3 +162,5 @@ AWS_PUBLIC_MEDIA_LOCATION = "media/public"
 DEFAULT_FILE_STORAGE = "core.storage_backends.PublicMediaStorage"
 AWS_PRIVATE_MEDIA_LOCATION = "media/private"
 PRIVATE_FILE_STORAGE = "core.storage_backends.PrivateMediaStorage"
+
+
