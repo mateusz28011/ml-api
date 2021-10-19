@@ -3,6 +3,7 @@ from django.contrib import admin
 from django.urls import path
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
+from ml.views import AlgorithmViewset
 from rest_framework import permissions
 from rest_framework.routers import SimpleRouter
 
@@ -29,6 +30,7 @@ schema_view = get_schema_view(
 router = SimpleRouter()
 
 router.register("datasets", DatasetViewset)
+router.register("algorithm", AlgorithmViewset)
 
 urlpatterns = [
     path("admin/", admin.site.urls),
