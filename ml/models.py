@@ -22,3 +22,15 @@ class Algorithm(models.Model):
         (4, "Neural networks"),
     )
     algorithm = models.PositiveSmallIntegerField(choices=ALGORITHMS)
+
+
+class KmeansParameters(models.Model):
+    algorithm = models.OneToOneField(Algorithm, on_delete=models.CASCADE)
+    n_clusters = models.PositiveSmallIntegerField(default=8)
+    METHODS = (
+        (0, "k-means++"),
+        (1, "random"),
+    )
+    init = models.PositiveSmallIntegerField(choices=METHODS, default=0)
+    n_init = models.PositiveSmallIntegerField(default=10)
+    max_iter = models.PositiveSmallIntegerField(default=300)

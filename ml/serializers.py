@@ -8,6 +8,6 @@ class AlgorithmSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Algorithm
-        fields = ["id", "creator", "dataset", "task_result", "algorithm", "algorithm_display"]
-        read_only_fields = ["task_result", "creator"]
+        fields = ["id", "creator", "dataset", "task", "result_data", "algorithm", "algorithm_display"]
+        read_only_fields = ["task", "result_data", "creator"]
         write_only_fields = ["algorithm"]
