@@ -98,7 +98,7 @@ DATABASES = {
         "NAME": "postgres",
         "USER": "postgres",
         "PASSWORD": os.getenv("DATABASE_PASSWORD"),
-        "HOST": "mateusz28011-ml.cj4kubc3oiec.eu-central-1.rds.amazonaws.com",
+        "HOST": "mateusz28011-ml-2.cj4kubc3oiec.eu-central-1.rds.amazonaws.com",
         "PORT": "5432",
     }
 }
@@ -162,5 +162,3 @@ AWS_PUBLIC_MEDIA_LOCATION = "media/public"
 DEFAULT_FILE_STORAGE = "core.storage_backends.PublicMediaStorage"
 AWS_PRIVATE_MEDIA_LOCATION = "media/private"
 PRIVATE_FILE_STORAGE = "core.storage_backends.PrivateMediaStorage"
-
-

@@ -1,5 +1,5 @@
 from django.contrib import admin
 
-from .models import Algorithm
+from .models import AlgorithmData
 
-admin.site.register(Algorithm)
+admin.site.register(AlgorithmData)

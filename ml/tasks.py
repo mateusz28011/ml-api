@@ -3,33 +3,85 @@ from io import BytesIO
 import pandas as pd
 from celery import shared_task
 from django.core.files.base import ContentFile
-from sklearn.cluster import KMeans
+from sklearn.cluster import KMeans, SpectralClustering
 from sklearn.decomposition import PCA
+from sklearn.mixture import GaussianMixture
 
-from .models import Algorithm
+from .models import AlgorithmData
+
+
+class AlgorithmWorkflow:
+    def __init__(self, algorithm_instance, algorithm_data_instance):
+        self.algorithm_instance = algorithm_instance
+        self.algorithm_data_instance = algorithm_data_instance
+
+    def load_dataset_into_data_frame(self):
+        self.data = pd.read_csv(self.algorithm_data_instance.dataset.dataset.file)
+
+    def save_data_into_result_in_csv(self):
+        output = BytesIO()
+        pd.DataFrame(self.labels).to_csv(output, index=False)
+        name = self.algorithm_data_instance.get_algorithm_display().replace(" ", "_")
+        result_data = self.algorithm_data_instance.result_data
+        result_data.save(f"{name}_{self.algorithm_data_instance.id}.csv", ContentFile(output.getvalue()))
+
+    def start(self):
+        self.load_dataset_into_data_frame()
+        self.labels = self.algorithm_instance.fit_predict(self.data)
+        self.save_data_into_result_in_csv()
 
 
 @shared_task
 def kmeans(algorithm_pk):
-    instance = Algorithm.objects.get(pk=algorithm_pk)
-
-    df = pd.read_csv(instance.dataset.dataset.file)
+    instance = AlgorithmData.objects.get(pk=algorithm_pk)
 
     # pca = PCA(2)
     # df = pca.fit_transform(df)
 
     parameters = instance.kmeansparameters
     init_method = parameters.get_init_display()
-    alg = KMeans(
-        n_clusters=parameters.n_clusters,
-        init=init_method,
-        n_init=parameters.n_init,
-        max_iter=parameters.max_iter,
+    awf = AlgorithmWorkflow(
+        KMeans(
+            n_clusters=parameters.n_clusters,
+            init=init_method,
+            n_init=parameters.n_init,
+            max_iter=parameters.max_iter,
+        ),
+        instance,
     )
-    label = alg.fit_predict(df)
 
-    output = BytesIO()
-    pd.DataFrame(label).to_csv(output, index=False)
-    instance.result_data.save(f"kmeans_{instance.id}.csv", ContentFile(output.getvalue()))
+    awf.start()
+
+    return instance.id
+
+
+@shared_task
+def gaussian_mixture(algorithm_pk):
+    instance = AlgorithmData.objects.get(pk=algorithm_pk)
+
+    awf = AlgorithmWorkflow(
+        GaussianMixture(
+            n_components=10,
+        ),
+        instance,
+    )
+
+    awf.start()
+
+    return instance.id
+
+
+@shared_task
+def spectral_clustering(algorithm_pk):
+    instance = AlgorithmData.objects.get(pk=algorithm_pk)
+
+    awf = AlgorithmWorkflow(
+        SpectralClustering(
+            n_clusters=10,
+        ),
+        instance,
+    )
+
+    awf.start()
 
     return instance.id
