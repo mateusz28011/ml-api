@@ -9,17 +9,20 @@ def user_directory_path(instance, filename):
     return f"users/user_{instance.creator.id}/results/{filename}"
 
 
-class AlgorithmData(models.Model):
+class Clustering(models.Model):
     creator = models.ForeignKey(get_user_model(), related_name="creator", on_delete=models.PROTECT)
     dataset = models.ForeignKey(Dataset, on_delete=models.PROTECT)
+    algorithms = models.ManyToManyField("ml.AlgorithmData")
+
+
+class AlgorithmData(models.Model):
     task = models.OneToOneField(TaskResult, blank=True, null=True, on_delete=models.PROTECT)
+    clusters_count = models.SmallIntegerField()
     result_data = models.FileField(upload_to=user_directory_path, storage=PrivateMediaStorage, blank=True, null=True)
     ALGORITHMS = (
         (0, "K-means"),
         (1, "Spectral Clustering"),
-        (2, "Hidden Markov model"),
-        (3, "Gaussian Mixture"),
-        (4, "Neural networks"),
+        (2, "Gaussian Mixture"),
     )
     algorithm = models.PositiveSmallIntegerField(choices=ALGORITHMS)
 
