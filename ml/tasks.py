@@ -16,7 +16,7 @@ class AlgorithmWorkflow:
         self.algorithm_data_instance = algorithm_data_instance
 
     def load_dataset_into_data_frame(self):
-        self.data = pd.read_csv(self.algorithm_data_instance.dataset.dataset.file)
+        self.data = pd.read_csv(self.algorithm_data_instance.clustering.dataset.file)
 
     def save_data_into_result_in_csv(self):
         output = BytesIO()
@@ -38,14 +38,9 @@ def kmeans(algorithm_pk):
     # pca = PCA(2)
     # df = pca.fit_transform(df)
 
-    parameters = instance.kmeansparameters
-    init_method = parameters.get_init_display()
     awf = AlgorithmWorkflow(
         KMeans(
-            n_clusters=parameters.n_clusters,
-            init=init_method,
-            n_init=parameters.n_init,
-            max_iter=parameters.max_iter,
+            n_clusters=instance.clusters_count,
         ),
         instance,
     )

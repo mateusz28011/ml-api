@@ -6,5 +6,5 @@ from .models import Dataset
 class DatasetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Dataset
-        fields = ["id", "dataset", "owner"]
+        fields = ["id", "file", "owner"]
         read_only_fields = ["owner"]

@@ -6,17 +6,19 @@ from django_celery_results.models import TaskResult
 
 
 def user_directory_path(instance, filename):
-    return f"users/user_{instance.creator.id}/results/{filename}"
+    return f"users/user_{instance.clustering.creator.id}/results/{filename}"
 
 
 class Clustering(models.Model):
-    creator = models.ForeignKey(get_user_model(), related_name="creator", on_delete=models.PROTECT)
+    creator = models.ForeignKey(get_user_model(), on_delete=models.PROTECT)
     dataset = models.ForeignKey(Dataset, on_delete=models.PROTECT)
-    algorithms = models.ManyToManyField("ml.AlgorithmData")
+    # dataset = models.ForeignKey(Dataset, on_delete=models.PROTECT)
+    # algorithms = models.ManyToManyField("ml.AlgorithmData")
 
 
 class AlgorithmData(models.Model):
     task = models.OneToOneField(TaskResult, blank=True, null=True, on_delete=models.PROTECT)
+    clustering = models.ForeignKey(Clustering, on_delete=models.CASCADE)
     clusters_count = models.SmallIntegerField()
     result_data = models.FileField(upload_to=user_directory_path, storage=PrivateMediaStorage, blank=True, null=True)
     ALGORITHMS = (
@@ -25,15 +27,3 @@ class AlgorithmData(models.Model):
         (2, "Gaussian Mixture"),
     )
     algorithm = models.PositiveSmallIntegerField(choices=ALGORITHMS)
-
-
-class KmeansParameters(models.Model):
-    algorithm = models.OneToOneField(AlgorithmData, on_delete=models.CASCADE)
-    n_clusters = models.PositiveSmallIntegerField(default=8)
-    METHODS = (
-        (0, "k-means++"),
-        (1, "random"),
-    )
-    init = models.PositiveSmallIntegerField(choices=METHODS, default=0)
-    n_init = models.PositiveSmallIntegerField(default=10)
-    max_iter = models.PositiveSmallIntegerField(default=300)

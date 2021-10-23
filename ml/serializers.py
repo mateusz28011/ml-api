@@ -1,6 +1,13 @@
 from rest_framework import serializers
 
-from .models import AlgorithmData
+from .models import AlgorithmData, Clustering
+
+
+class ClusteringSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Clustering
+        fields = ["id", "creator", "dataset"]
+        read_only_fields = ["creator"]
 
 
 class AlgorithmDataSerializer(serializers.ModelSerializer):
@@ -8,6 +15,6 @@ class AlgorithmDataSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = AlgorithmData
-        fields = ["id", "creator", "dataset", "task", "result_data", "algorithm", "algorithm_display"]
-        read_only_fields = ["task", "result_data", "creator"]
+        fields = ["id", "task", "result_data", "algorithm", "algorithm_display", "clusters_count"]
+        read_only_fields = ["task", "result_data"]
         write_only_fields = ["algorithm"]
