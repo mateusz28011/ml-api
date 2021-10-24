@@ -6,7 +6,9 @@ from datasets.permissions import IsOwner
 from datasets.serializers import DatasetSerializer
 
 
-class DatasetViewset(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
+class DatasetViewset(
+    mixins.RetrieveModelMixin, mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet
+):
     queryset = Dataset.objects.all()
     serializer_class = DatasetSerializer
     permission_classes = [IsAuthenticated & IsOwner]

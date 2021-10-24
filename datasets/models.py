@@ -8,12 +8,17 @@ def user_directory_path(instance, filename):
 
 
 class Dataset(models.Model):
-    owner = models.ForeignKey(get_user_model(), related_name="owner", on_delete=models.PROTECT)
+    owner = models.ForeignKey(get_user_model(), on_delete=models.PROTECT)
     file = models.FileField(upload_to=user_directory_path, storage=PrivateMediaStorage)
-    labels = models.OneToOneField("datasets.Label", blank=True, null=True, on_delete=models.PROTECT)
-    is_checked = models.BooleanField(default=False)
+    labels = models.FileField(
+        upload_to=user_directory_path,
+        storage=PrivateMediaStorage,
+        blank=True,
+        null=True,
+    )
+    # labels = models.OneToOneField("datasets.Label", blank=True, null=True, on_delete=models.PROTECT)
 
 
-class Label(models.Model):
-    labels = models.FileField(upload_to=user_directory_path, storage=PrivateMediaStorage, blank=True, null=True)
-    file = models.FileField(upload_to=user_directory_path, storage=PrivateMediaStorage)
+# class Label(models.Model):
+#     labels = models.FileField(upload_to=user_directory_path, storage=PrivateMediaStorage, blank=True, null=True)
+#     file = models.FileField(upload_to=user_directory_path, storage=PrivateMediaStorage)
