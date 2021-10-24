@@ -12,8 +12,6 @@ def user_directory_path(instance, filename):
 class Clustering(models.Model):
     creator = models.ForeignKey(get_user_model(), on_delete=models.PROTECT)
     dataset = models.ForeignKey(Dataset, on_delete=models.PROTECT)
-    # dataset = models.ForeignKey(Dataset, on_delete=models.PROTECT)
-    # algorithms = models.ManyToManyField("ml.AlgorithmData")
 
 
 class AlgorithmData(models.Model):

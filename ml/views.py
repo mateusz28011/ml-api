@@ -1,8 +1,11 @@
 from django.conf import settings
 from rest_framework import mixins, viewsets
 from rest_framework.decorators import action
+from rest_framework.exceptions import NotFound
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+
+from ml.permissions import HasAccess, IsCreator
 
 from .models import AlgorithmData, Clustering
 from .serializers import AlgorithmDataSerializer, ClusteringSerializer
@@ -14,7 +17,7 @@ class ClusteringViewset(
 ):
     queryset = Clustering.objects.all()
     serializer_class = ClusteringSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated & HasAccess]
 
     def perform_create(self, serializer):
         serializer.save(creator=self.request.user)
@@ -23,10 +26,14 @@ class ClusteringViewset(
 class AlgorithmDataViewset(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
     queryset = AlgorithmData.objects.all()
     serializer_class = AlgorithmDataSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated & IsCreator]
 
     def get_clustering(self):
-        return Clustering.objects.get(id=self.kwargs["clustering_pk"])
+        try:
+            clustering = Clustering.objects.get(pk=self.kwargs["clustering_pk"])
+        except:
+            raise NotFound({"clustering": "Not found."})
+        return clustering
 
     def perform_create(self, serializer):
         serializer.save(clustering=self.get_clustering())
