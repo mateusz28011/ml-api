@@ -43,3 +43,7 @@ class PrivateMediaStorage(S3Boto3Storage, ABC):
             # Upload the object which will auto close the
             # content_autoclose instance
             return super(PrivateMediaStorage, self)._save(name, content_autoclose)
+
+
+class PrivateMediaStorageOverwrite(PrivateMediaStorage):
+    file_overwrite = True

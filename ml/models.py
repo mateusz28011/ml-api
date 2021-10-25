@@ -1,4 +1,4 @@
-from core.storage_backends import PrivateMediaStorage
+from core.storage_backends import PrivateMediaStorageOverwrite
 from datasets.models import Dataset
 from django.contrib.auth import get_user_model
 from django.db import models
@@ -15,10 +15,12 @@ class Clustering(models.Model):
 
 
 class AlgorithmData(models.Model):
-    task = models.OneToOneField(TaskResult, blank=True, null=True, on_delete=models.PROTECT)
+    task_id = models.CharField(max_length=50, blank=True, null=True, default=None)
     clustering = models.ForeignKey(Clustering, on_delete=models.CASCADE)
-    clusters_count = models.SmallIntegerField()
-    result_data = models.FileField(upload_to=user_directory_path, storage=PrivateMediaStorage, blank=True, null=True)
+    clusters_count = models.PositiveIntegerField()
+    result_data = models.FileField(
+        upload_to=user_directory_path, storage=PrivateMediaStorageOverwrite, blank=True, null=True
+    )
     ALGORITHMS = (
         (0, "K-means"),
         (1, "Spectral Clustering"),

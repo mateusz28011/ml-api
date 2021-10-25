@@ -31,9 +31,20 @@ class AlgorithmWorkflow:
         self.save_data_into_result_in_csv()
 
 
+def get_instance_and_save_task_id(algorithm_pk, task_id):
+    instance = AlgorithmData.objects.get(pk=algorithm_pk)
+    instance.task_id = task_id
+    instance.save()
+    return instance
+
+
+def get_instance(algorithm_pk):
+    return AlgorithmData.objects.get(pk=algorithm_pk)
+
+
 @shared_task
 def kmeans(algorithm_pk):
-    instance = AlgorithmData.objects.get(pk=algorithm_pk)
+    instance = get_instance(algorithm_pk)
 
     # pca = PCA(2)
     # df = pca.fit_transform(df)
@@ -50,9 +61,9 @@ def kmeans(algorithm_pk):
     return instance.id
 
 
-@shared_task
-def gaussian_mixture(algorithm_pk):
-    instance = AlgorithmData.objects.get(pk=algorithm_pk)
+@shared_task(bind=True)
+def gaussian_mixture(self, algorithm_pk):
+    instance = get_instance_and_save_task_id(algorithm_pk, self.request.id)
 
     awf = AlgorithmWorkflow(
         GaussianMixture(
@@ -66,9 +77,9 @@ def gaussian_mixture(algorithm_pk):
     return instance.id
 
 
-@shared_task
-def spectral_clustering(algorithm_pk):
-    instance = AlgorithmData.objects.get(pk=algorithm_pk)
+@shared_task(bind=True)
+def spectral_clustering(self, algorithm_pk):
+    instance = get_instance_and_save_task_id(algorithm_pk, self.request.id)
 
     awf = AlgorithmWorkflow(
         SpectralClustering(
