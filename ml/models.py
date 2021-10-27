@@ -27,3 +27,13 @@ class AlgorithmData(models.Model):
         (2, "Gaussian Mixture"),
     )
     algorithm = models.PositiveSmallIntegerField(choices=ALGORITHMS)
+
+    def has_scores(self):
+        return hasattr(self, "scores")
+
+
+class Scores(models.Model):
+    algorithm_data = models.OneToOneField(AlgorithmData, on_delete=models.CASCADE)
+    silhouette_score = models.FloatField()
+    calinski_harabasz_score = models.FloatField()
+    davies_bouldin_score = models.FloatField()

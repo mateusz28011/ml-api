@@ -10,7 +10,11 @@ from rest_framework.response import Response
 from ml.permissions import HasAccess, IsCreator
 
 from .models import AlgorithmData, Clustering
-from .serializers import AlgorithmDataSerializer, ClusteringSerializer
+from .serializers import (
+    AlgorithmDataListSerializer,
+    AlgorithmDataSerializer,
+    ClusteringSerializer,
+)
 from .tasks import gaussian_mixture, kmeans, spectral_clustering
 
 
@@ -26,7 +30,11 @@ class ClusteringViewset(
 
 
 class AlgorithmDataViewset(
-    mixins.DestroyModelMixin, mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet
+    mixins.RetrieveModelMixin,
+    mixins.DestroyModelMixin,
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    viewsets.GenericViewSet,
 ):
     queryset = AlgorithmData.objects.all()
     serializer_class = AlgorithmDataSerializer
@@ -50,6 +58,11 @@ class AlgorithmDataViewset(
 
         return queryset
 
+    def get_serializer_class(self):
+        if self.action == "list":
+            return AlgorithmDataListSerializer
+        return self.serializer_class
+
     @action(detail=True, methods=["post"])
     def start(self, request, pk, *args, **kwargs):
         instance = self.get_object()
@@ -59,7 +72,6 @@ class AlgorithmDataViewset(
                 task_instance = TaskResult.objects.get(task_id=instance.task_id)
             except:
                 raise PermissionDenied("Cannot start. Task has been sent already.")
-
             if task_instance.status != "FAILURE":
                 raise PermissionDenied("Cannot start. Task is finished successfully.")
 
