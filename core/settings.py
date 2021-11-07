@@ -26,16 +26,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-#wl@byrivc&%f&d@xn!e%v87il4*d=$!(x9^cfrj4#2y^twgv_"
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-CLIENT_URL = "https://localhost:3000"
-ALLOWED_HOSTS = []
-
-CORS_ORIGIN_ALLOW_ALL = True
-CORS_ALLOW_CREDENTIALS = True
+DEBUG = os.getenv("DEBUG").lower() == "true"
 
 AUTH_USER_MODEL = "accounts.User"
 
@@ -70,10 +64,24 @@ INSTALLED_APPS = [
     "accounts",
 ]
 
+CLIENT_URL = os.getenv("CLIENT_URL")
+ALLOWED_HOSTS = [CLIENT_URL]
+
+
+JWT_AUTH_SAMESITE = "None"
+JWT_AUTH_SECURE = True
+
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS = [CLIENT_URL]
+CSRF_TRUSTED_ORIGINS = [CLIENT_URL]
+
+
 CELERY_RESULT_BACKEND = "django-db"
 CELERY_BROKER_URL = os.getenv("REDIS_URL")
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -110,17 +118,17 @@ WSGI_APPLICATION = "core.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "postgres",
-        "USER": "postgres",
+        "NAME": os.getenv("DATABASE_NAME"),
+        "USER": os.getenv("DATABASE_USER"),
         "PASSWORD": os.getenv("DATABASE_PASSWORD"),
-        "HOST": "mateusz28011-ml-2.cj4kubc3oiec.eu-central-1.rds.amazonaws.com",
-        "PORT": "5432",
+        "HOST": os.getenv("DATABASE_HOST"),
+        "PORT": os.getenv("DATABASE_PORT"),
     }
 }
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "smtp.gmail.com"
-EMAIL_PORT = 587
+EMAIL_HOST = os.getenv("EMAIL_HOST")
+EMAIL_PORT = os.getenv("EMAIL_PORT")
 EMAIL_HOST_USER = os.getenv("EMAIL_ADDRESS")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_APP_PASSWORD")
 EMAIL_USE_TLS = True
@@ -231,19 +239,18 @@ ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
-LOGIN_URL = f"{CLIENT_URL}/login-register"
+LOGIN_URL = f"{CLIENT_URL}/login"
 
 REST_SESSION_LOGIN = False
 REST_USE_JWT = True
-JWT_AUTH_COOKIE = "access-token"
-JWT_AUTH_REFRESH_COOKIE = "refresh-token"
-# JWT_AUTH_SAMESITE = None
+JWT_AUTH_COOKIE = "access"
+JWT_AUTH_REFRESH_COOKIE = "refresh"
 SITE_ID = 2
 
 AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
-AWS_STORAGE_BUCKET_NAME = "mateusz28011-ml-bucket"
-AWS_S3_REGION_NAME = "eu-central-1"
+AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
+AWS_S3_REGION_NAME = os.getenv("AWS_S3_REGION_NAME")
 AWS_S3_OBJECT_PARAMETERS = {"CacheControl": "max-age=86400"}
 
 AWS_S3_FILE_OVERWRITE = False
