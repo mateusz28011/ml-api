@@ -37,7 +37,7 @@ class ScoresSerializer(serializers.ModelSerializer):
 
 
 class AlgorithmDataSerializer(AlgorithmDataListSerializer):
-    scores = ScoresSerializer()
+    scores = ScoresSerializer(read_only=True)
 
     class Meta(AlgorithmDataListSerializer.Meta):
         fields = ["id", "task_status", "result_data", "algorithm", "algorithm_display", "clusters_count", "scores"]

@@ -9,13 +9,14 @@ def user_directory_path(instance, filename):
 
 class Dataset(models.Model):
     owner = models.ForeignKey(get_user_model(), on_delete=models.PROTECT)
+    name = models.CharField(blank=True, max_length=50)
     file = models.FileField(upload_to=user_directory_path, storage=PrivateMediaStorage)
-    labels = models.FileField(
-        upload_to=user_directory_path,
-        storage=PrivateMediaStorage,
-        blank=True,
-        null=True,
-    )
+    # labels = models.FileField(
+    #     upload_to=user_directory_path,
+    #     storage=PrivateMediaStorage,
+    #     blank=True,
+    #     null=True,
+    # )
     # labels = models.OneToOneField("datasets.Label", blank=True, null=True, on_delete=models.PROTECT)
 
 
