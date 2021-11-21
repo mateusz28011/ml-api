@@ -7,8 +7,8 @@ from .models import AlgorithmData, Clustering, Scores
 class ClusteringSerializer(serializers.ModelSerializer):
     class Meta:
         model = Clustering
-        fields = ["id", "creator", "dataset"]
-        read_only_fields = ["creator"]
+        fields = ["id", "name", "dataset"]
+        # read_only_fields = ["creator"]
 
 
 class AlgorithmDataListSerializer(serializers.ModelSerializer):

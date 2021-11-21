@@ -10,7 +10,7 @@ def user_directory_path(instance, filename):
 
 
 class Clustering(models.Model):
-    creator = models.ForeignKey(get_user_model(), on_delete=models.PROTECT)
+    name = models.CharField(max_length=50)
     dataset = models.ForeignKey(Dataset, on_delete=models.PROTECT)
 
 
