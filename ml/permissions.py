@@ -15,14 +15,14 @@ class HasAccess(permissions.BasePermission):
         return True
 
     def has_object_permission(self, request, view, obj):
-        if request.user == obj.creator:
+        if request.user == obj.dataset.owner:
             return True
         return False
 
 
-class IsCreator(permissions.BasePermission):
+class IsOwner(permissions.BasePermission):
     def has_permission(self, request, view):
         clustering = view.get_clustering()
-        if request.user != clustering.creator:
+        if request.user != clustering.dataset.owner:
             return False
         return True

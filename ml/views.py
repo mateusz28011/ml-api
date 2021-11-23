@@ -1,4 +1,3 @@
-from celery.result import AsyncResult
 from django.conf import settings
 from django_celery_results.models import TaskResult
 from rest_framework import mixins, viewsets
@@ -7,7 +6,7 @@ from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from ml.permissions import HasAccess, IsCreator
+from ml.permissions import HasAccess, IsOwner
 
 from .models import AlgorithmData, Clustering
 from .serializers import (
@@ -25,8 +24,8 @@ class ClusteringViewset(
     serializer_class = ClusteringSerializer
     permission_classes = [IsAuthenticated & HasAccess]
 
-    def perform_create(self, serializer):
-        serializer.save(creator=self.request.user)
+    # def perform_create(self, serializer):
+    #     serializer.save(creator=self.request.user)
 
 
 class AlgorithmDataViewset(
@@ -38,7 +37,7 @@ class AlgorithmDataViewset(
 ):
     queryset = AlgorithmData.objects.all()
     serializer_class = AlgorithmDataSerializer
-    permission_classes = [IsAuthenticated & IsCreator]
+    permission_classes = [IsAuthenticated & IsOwner]
 
     def get_clustering(self):
         try:
