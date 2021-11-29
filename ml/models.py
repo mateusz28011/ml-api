@@ -6,7 +6,7 @@ from django_celery_results.models import TaskResult
 
 
 def user_directory_path(instance, filename):
-    return f"users/user_{instance.clustering.creator.id}/results/{filename}"
+    return f"users/user_{instance.clustering.dataset.owner.id}/results/{filename}"
 
 
 class Clustering(models.Model):

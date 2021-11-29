@@ -63,9 +63,9 @@ def get_instance(algorithm_pk):
     return AlgorithmData.objects.get(pk=algorithm_pk)
 
 
-@shared_task
-def kmeans(algorithm_pk):
-    instance = get_instance(algorithm_pk)
+@shared_task(bind=True)
+def kmeans(self, algorithm_pk):
+    instance = get_instance_and_save_task_id(algorithm_pk, self.request.id)
 
     # pca = PCA(2)
     # df = pca.fit_transform(df)
