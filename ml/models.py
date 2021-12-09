@@ -21,6 +21,12 @@ class AlgorithmData(models.Model):
     result_data = models.FileField(
         upload_to=user_directory_path, storage=PrivateMediaStorageOverwrite, blank=True, null=True
     )
+    plot_2d_points = models.FileField(
+        upload_to=user_directory_path, storage=PrivateMediaStorageOverwrite, blank=True, null=True
+    )
+    plot_3d_points = models.FileField(
+        upload_to=user_directory_path, storage=PrivateMediaStorageOverwrite, blank=True, null=True
+    )
     ALGORITHMS = (
         (0, "K-means"),
         (1, "Spectral Clustering"),

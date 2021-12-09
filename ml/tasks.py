@@ -15,16 +15,16 @@ class AlgorithmWorkflow:
     def __init__(self, algorithm_instance, algorithm_data_instance):
         self.algorithm_instance = algorithm_instance
         self.algorithm_data_instance = algorithm_data_instance
+        name = self.algorithm_data_instance.get_algorithm_display().replace(" ", "_")
+        self.name = f"{name}_{self.algorithm_data_instance.id}"
 
     def load_dataset_into_data_frame(self):
         self.data = pd.read_csv(self.algorithm_data_instance.clustering.dataset.file)
 
-    def save_data_into_result_in_csv(self):
+    def save_data_into_file_field(self, data, field, filename):
         output = BytesIO()
-        pd.DataFrame(self.labels).to_csv(output, index=False)
-        name = self.algorithm_data_instance.get_algorithm_display().replace(" ", "_")
-        result_data = self.algorithm_data_instance.result_data
-        result_data.save(f"{name}_{self.algorithm_data_instance.id}.csv", ContentFile(output.getvalue()))
+        pd.DataFrame(data).to_csv(output, index=False, header=False, index_label=False)
+        field.save(f"{filename}.csv", ContentFile(output.getvalue()))
 
     def calculate_metrics(self):
         ss = metrics.silhouette_score(self.data, self.labels, metric="euclidean")
@@ -45,11 +45,20 @@ class AlgorithmWorkflow:
                 davies_bouldin_score=dbs,
             )
 
+    def prepare_points_for_plots(self):
+        self.save_data_into_file_field(
+            PCA(2).fit_transform(self.data), self.algorithm_data_instance.plot_2d_points, f"{self.name}_points_2d"
+        )
+        self.save_data_into_file_field(
+            PCA(3).fit_transform(self.data), self.algorithm_data_instance.plot_3d_points, f"{self.name}_points_3d"
+        )
+
     def start(self):
         self.load_dataset_into_data_frame()
         self.labels = self.algorithm_instance.fit_predict(self.data)
-        self.save_data_into_result_in_csv()
+        self.save_data_into_file_field(self.labels, self.algorithm_data_instance.result_data, self.name)
         self.calculate_metrics()
+        self.prepare_points_for_plots()
 
 
 def get_instance_and_save_task_id(algorithm_pk, task_id):
@@ -67,17 +76,12 @@ def get_instance(algorithm_pk):
 def kmeans(self, algorithm_pk):
     instance = get_instance_and_save_task_id(algorithm_pk, self.request.id)
 
-    # pca = PCA(2)
-    # df = pca.fit_transform(df)
-
-    awf = AlgorithmWorkflow(
+    AlgorithmWorkflow(
         KMeans(
             n_clusters=instance.clusters_count,
         ),
         instance,
-    )
-
-    awf.start()
+    ).start()
 
     return instance.id
 
@@ -86,14 +90,12 @@ def kmeans(self, algorithm_pk):
 def gaussian_mixture(self, algorithm_pk):
     instance = get_instance_and_save_task_id(algorithm_pk, self.request.id)
 
-    awf = AlgorithmWorkflow(
+    AlgorithmWorkflow(
         GaussianMixture(
-            n_components=10,
+            n_components=instance.clusters_count,
         ),
         instance,
-    )
-
-    awf.start()
+    ).start()
 
     return instance.id
 
@@ -102,13 +104,11 @@ def gaussian_mixture(self, algorithm_pk):
 def spectral_clustering(self, algorithm_pk):
     instance = get_instance_and_save_task_id(algorithm_pk, self.request.id)
 
-    awf = AlgorithmWorkflow(
+    AlgorithmWorkflow(
         SpectralClustering(
-            n_clusters=10,
+            n_clusters=instance.clusters_count,
         ),
         instance,
-    )
-
-    awf.start()
+    ).start()
 
     return instance.id

@@ -13,7 +13,11 @@ from datasets.serializers import DatasetSerializer
 
 
 class DatasetViewset(
-    mixins.RetrieveModelMixin, mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet
+    mixins.RetrieveModelMixin,
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    mixins.UpdateModelMixin,
+    viewsets.GenericViewSet,
 ):
     queryset = Dataset.objects.all()
     # parser_classes = [MultiPartParser]

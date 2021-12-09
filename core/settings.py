@@ -65,7 +65,7 @@ INSTALLED_APPS = [
 ]
 
 CLIENT_URL = os.getenv("CLIENT_URL")
-ALLOWED_HOSTS = [CLIENT_URL, "localhost"]
+ALLOWED_HOSTS = [CLIENT_URL, "localhost", "127.0.0.1"]
 
 
 JWT_AUTH_SAMESITE = "None"
@@ -198,7 +198,7 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=10),
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=5),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
     "ROTATE_REFRESH_TOKENS": True,
     "AUTH_HEADER_TYPES": ("JWT",),

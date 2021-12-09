@@ -40,6 +40,16 @@ class AlgorithmDataSerializer(AlgorithmDataListSerializer):
     scores = ScoresSerializer(read_only=True)
 
     class Meta(AlgorithmDataListSerializer.Meta):
-        fields = ["id", "task_status", "result_data", "algorithm", "algorithm_display", "clusters_count", "scores"]
-        read_only_fields = ["result_data", "task_status", "scores"]
+        fields = [
+            "id",
+            "task_status",
+            "result_data",
+            "algorithm",
+            "algorithm_display",
+            "clusters_count",
+            "scores",
+            "plot_2d_points",
+            "plot_3d_points",
+        ]
+        read_only_fields = ["result_data", "task_status", "scores", "plot_2d_points", "plot_3d_points"]
         write_only_fields = ["algorithm"]
