@@ -8,6 +8,8 @@ from sklearn.cluster import KMeans, SpectralClustering
 from sklearn.decomposition import PCA
 from sklearn.mixture import GaussianMixture
 
+from ml.algorithms.kmeans import Kmeanspp
+
 from .models import AlgorithmData, Scores
 
 
@@ -19,7 +21,7 @@ class AlgorithmWorkflow:
         self.name = f"{name}_{self.algorithm_data_instance.id}"
 
     def load_dataset_into_data_frame(self):
-        self.data = pd.read_csv(self.algorithm_data_instance.clustering.dataset.file)
+        self.data = pd.read_csv(self.algorithm_data_instance.clustering.dataset.file).to_numpy()
 
     def save_data_into_file_field(self, data, field, filename):
         output = BytesIO()
@@ -77,8 +79,8 @@ def kmeans(self, algorithm_pk):
     instance = get_instance_and_save_task_id(algorithm_pk, self.request.id)
 
     AlgorithmWorkflow(
-        KMeans(
-            n_clusters=instance.clusters_count,
+        Kmeanspp(
+            clusters_count=instance.clusters_count,
         ),
         instance,
     ).start()
