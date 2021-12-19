@@ -4,11 +4,11 @@ import pandas as pd
 from celery import shared_task
 from django.core.files.base import ContentFile
 from sklearn import metrics
-from sklearn.cluster import KMeans, SpectralClustering
 from sklearn.decomposition import PCA
 from sklearn.mixture import GaussianMixture
 
 from ml.algorithms.kmeans import Kmeanspp
+from ml.algorithms.spectral_clustering import SpectralClustering
 
 from .models import AlgorithmData, Scores
 
@@ -108,7 +108,7 @@ def spectral_clustering(self, algorithm_pk):
 
     AlgorithmWorkflow(
         SpectralClustering(
-            n_clusters=instance.clusters_count,
+            clusters_count=instance.clusters_count,
         ),
         instance,
     ).start()
