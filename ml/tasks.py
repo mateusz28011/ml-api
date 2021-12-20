@@ -5,8 +5,8 @@ from celery import shared_task
 from django.core.files.base import ContentFile
 from sklearn import metrics
 from sklearn.decomposition import PCA
-from sklearn.mixture import GaussianMixture
 
+from ml.algorithms.gaussian_mixture import GaussianMixture
 from ml.algorithms.kmeans import Kmeanspp
 from ml.algorithms.spectral_clustering import SpectralClustering
 
@@ -94,7 +94,7 @@ def gaussian_mixture(self, algorithm_pk):
 
     AlgorithmWorkflow(
         GaussianMixture(
-            n_components=instance.clusters_count,
+            clusters_count=instance.clusters_count,
         ),
         instance,
     ).start()
